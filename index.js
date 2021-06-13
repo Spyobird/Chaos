@@ -146,7 +146,7 @@ function init() {
 
   // GUI Display
   gui = new dat.GUI();
-  gui.add(params, 'currentIndex', TITLES).name('Index').listen().onChange(i => {
+  gui.add(params, 'currentIndex', TITLES).name('Type').listen().onChange(i => {
     currentIndex = TITLES.indexOf(i);
     refreshGraphics();
   });
