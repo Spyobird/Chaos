@@ -263,7 +263,7 @@ function refreshGraphics() {
   composer.addPass(bloomPass);
 
   // HTML Title
-  const title = document.title;
+  const title = "Chaos";
   document.title = TITLES[currentIndex] + " | " + title;
 }
 
