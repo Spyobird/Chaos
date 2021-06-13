@@ -140,10 +140,6 @@ function init() {
   // Debugging
   //window.addEventListener('keydown', keyDown);
 
-  // HTML Title
-  const title = document.title;
-  document.title = TITLES[currentIndex] + " | " + title;
-
   // Stats Display
   stats = new Stats();
   document.body.appendChild(stats.dom);
@@ -265,6 +261,10 @@ function refreshGraphics() {
 
   const bloomPass = new THREE.UnrealBloomPass({x: sizes.height, y: sizes.width}, 0.6, 0.0, 0.8);
   composer.addPass(bloomPass);
+
+  // HTML Title
+  const title = document.title;
+  document.title = TITLES[currentIndex] + " | " + title;
 }
 
 /*function keyDown(e) {
