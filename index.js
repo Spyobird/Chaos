@@ -1,4 +1,5 @@
 let canvas;
+let stats, gui;
 let scene, camera, renderer;
 let particleTexture, particleGeometry, particleMaterial, particles;
 let trailGeometry, trailMaterial, trails;
@@ -9,14 +10,19 @@ const sizes = {
   height: window.innerHeight
 }
 
-let currentIndex = parseInt(document.querySelector('.i').textContent);
+const params = {
+  currentIndex: "Lorenz Attractor"
+};
+
+//let currentIndex = parseInt(document.querySelector('.i').textContent);
+currentIndex = 0;
 
 const TITLES = [
   "Lorenz Attractor",
   "Aizawa Attractor",
   "Thomas Attractor",
   "Yu-Wang Attractor"
-]
+];
 
 const CONSTANTS = [{
   s: 10,
@@ -121,6 +127,36 @@ init();
 animate();
 
 function init() {
+  clock = new THREE.Clock();
+
+  // Canvas
+  canvas = document.querySelector('.webgl');
+  //console.log(canvas);
+  refreshGraphics();
+
+  // Event listener for window resize
+  window.addEventListener('resize', onWindowResize, false);
+
+  // Debugging
+  //window.addEventListener('keydown', keyDown);
+
+  // HTML Title
+  const title = document.title;
+  document.title = TITLES[currentIndex] + " | " + title;
+
+  // Stats Display
+  stats = new Stats();
+  document.body.appendChild(stats.dom);
+
+  // GUI Display
+  gui = new dat.GUI();
+  gui.add(params, 'currentIndex', TITLES).name('Index').listen().onChange(i => {
+    currentIndex = TITLES.indexOf(i);
+    refreshGraphics();
+  });
+}
+
+function refreshGraphics() {
   // Misc
   const particleStartPos = new Float32Array(PARTICLE_COUNT * 3);
   for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
@@ -148,12 +184,6 @@ function init() {
       break;
   }*/
   const trailStartPos = new Float32Array(PARTICLE_COUNT * 3 * TRAIL_LENGTH * 2);
-
-  clock = new THREE.Clock();
-
-  // Canvas
-  canvas = document.querySelector('.webgl');
-  console.log(canvas);
 
   // Textures
   particleTexture = new THREE.TextureLoader().load('particle.png');
@@ -214,7 +244,6 @@ function init() {
   // Lights
 
   // Controls
-
   controls = new THREE.FlyControls(camera, renderer.domElement);
   controls.movementSpeed = CAMERA_POS[currentIndex][9];
 	controls.rollSpeed = Math.PI / 6;
@@ -236,24 +265,16 @@ function init() {
 
   const bloomPass = new THREE.UnrealBloomPass({x: sizes.height, y: sizes.width}, 0.6, 0.0, 0.8);
   composer.addPass(bloomPass);
-
-  // Event listener for window resize
-  window.addEventListener('resize', onWindowResize, false);
-
-  window.addEventListener('keydown', keyDown);
-
-  const title = document.title;
-  document.title = TITLES[currentIndex] + " | " + title;
 }
 
-function keyDown(e) {
+/*function keyDown(e) {
   switch (e.code) {
     case 'KeyP':
       const cam = [camera.position.x, camera.position.y, camera.position.z, camera.rotation.x, camera.rotation.y, camera.rotation.z].toString();
       document.write(cam);
       break;
   }
-}
+}*/
 
 function onWindowResize() {
     // Update sizes
@@ -270,9 +291,9 @@ function onWindowResize() {
 
 function animate() {
   requestAnimationFrame(animate);
-
   render();
   composer.render();
+  stats.update();
 }
 
 function render() {
